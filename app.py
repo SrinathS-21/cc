@@ -1,77 +1,94 @@
 import streamlit as st
 
-# Content for each topic
+# Detailed content for all topics
 topics = {
     "1. EC2 Instance Creation": """
-        1. **Log in to AWS Console**:
-           - Navigate to the EC2 Dashboard.
-        
+        ### Step-by-Step Guide to Creating an EC2 Instance
+
+        1. **Log in to AWS Management Console**:
+           - Navigate to [AWS Management Console](https://aws.amazon.com/console/).
+           - Access the EC2 Dashboard under the "Compute" section.
+
         2. **Launch an Instance**:
-           - Click on **Launch Instance**.
-           - Provide a name for your instance.
-        
-        3. **Select an AMI**:
-           - Choose an Amazon Machine Image (e.g., Amazon Linux 2 or Ubuntu).
-        
+           - Click on the **Launch Instance** button.
+           - Provide a descriptive name for your instance.
+
+        3. **Select an Amazon Machine Image (AMI)**:
+           - Choose a pre-configured template (e.g., Amazon Linux 2, Ubuntu 20.04).
+           - AMIs determine the operating system and pre-installed software.
+
         4. **Choose an Instance Type**:
-           - Select the type (e.g., t2.micro for free tier).
-        
-        5. **Configure Instance**:
-           - Assign a key pair for SSH access.
-           - Configure network settings, such as selecting an existing VPC and subnet.
-        
+           - Select an appropriate type, such as `t2.micro` for free tier eligibility.
+           - Instance types differ in CPU, memory, and storage capabilities.
+
+        5. **Configure Instance Details**:
+           - Assign or create a key pair for SSH access.
+           - Select a VPC and subnet for networking.
+           - Configure advanced settings (e.g., IAM roles, shutdown behavior).
+
         6. **Add Storage**:
-           - Specify the size and type of the root volume (e.g., 8 GiB General Purpose SSD).
-        
+           - Define the root volume size (default: 8 GiB General Purpose SSD).
+           - Add additional volumes if needed.
+
         7. **Configure Security Groups**:
-           - Create or use an existing security group.
-           - Open necessary ports (e.g., 22 for SSH, 80 for HTTP).
-        
-        8. **Launch Instance**:
-           - Review settings and click **Launch Instance**.
-        
+           - Create or modify a security group.
+           - Open required ports like `22` for SSH and `80` for HTTP.
+
+        8. **Review and Launch**:
+           - Review all the settings for correctness.
+           - Click **Launch Instance** to start provisioning.
+
         9. **Connect to the Instance**:
-           - Use SSH to connect:
+           - Use the public IP address to connect via SSH:
            ```bash
            ssh -i "your-key.pem" ec2-user@<public-ip>
            ```
     """,
     "2. Connect EC2 with RDS": """
-        1. **Create RDS Instance**:
-           - In the RDS Dashboard, launch a new RDS instance with MySQL.
-           - Ensure it is in the same VPC as your EC2 instance.
-        
-        2. **Modify Security Group for RDS**:
-           - Add a rule to allow inbound MySQL (port 3306) from the EC2 instance's security group.
-        
+        ### Connecting an EC2 Instance to an RDS Database
+
+        1. **Create an RDS Instance**:
+           - Go to the RDS Dashboard and click **Create Database**.
+           - Choose **Standard Create**, select MySQL, and configure the DB instance settings:
+             - Instance type: db.t3.micro (free tier).
+             - Storage: General Purpose SSD.
+             - Set a username and password.
+
+        2. **Modify RDS Security Group**:
+           - Edit the inbound rules of the RDS security group.
+           - Add a rule to allow MySQL (port 3306) from your EC2 instance's security group.
+
         3. **Install MySQL Client on EC2**:
-           - Connect to EC2 and run:
+           - SSH into the EC2 instance.
+           - Install MySQL client:
            ```bash
            sudo yum install mysql -y
            ```
-        
-        4. **Connect to RDS from EC2**:
-           - Use the command:
+
+        4. **Connect EC2 to RDS**:
+           - Use the MySQL client to connect:
            ```bash
            mysql -h <RDS-endpoint> -u <username> -p
            ```
+           - Provide the RDS password when prompted.
     """,
     "3. Create S3 Bucket and Display Image on Website": """
+        ### Steps to Create an S3 Bucket and Display an Image on a Website
+
         1. **Create an S3 Bucket**:
            - Navigate to the S3 Dashboard and click **Create Bucket**.
-           - Name the bucket and select the region.
-           - Enable or disable public access as needed.
+           - Provide a unique bucket name and choose a region.
+           - Disable block public access if the bucket is for public content.
 
-        2. **Upload Images**:
-           - Open the bucket, click **Upload**, and add your image files.
+        2. **Upload Files**:
+           - Open the bucket and click **Upload** to add files like images.
 
         3. **Enable Static Website Hosting**:
            - Go to the bucket's **Properties** tab.
-           - Enable static website hosting and set an index document (e.g., index.html).
+           - Enable static website hosting and specify an index document (e.g., index.html).
 
-        4. **Grant Permissions**:
-           - Update the bucket policy to allow public read access (if needed).
-           - Example:
+        4. **Set Permissions**:
+           - Update the bucket policy to allow public access:
            ```json
            {
              "Version": "2012-10-17",
@@ -87,24 +104,32 @@ topics = {
            ```
 
         5. **Integrate with a Website**:
-           - Use the bucket's endpoint URL to display the images in your website code.
+           - Use the bucket's endpoint URL to serve files.
+           - Example HTML to display an image:
+           ```html
+           <img src="https://your-bucket-name.s3.amazonaws.com/image.jpg" alt="S3 Image">
+           ```
     """,
     "4. Create EC2 and Provide Auto Scaling": """
-        1. **Launch EC2 Instance**:
-           - Follow the steps in "1. EC2 Instance Creation".
+        ### Steps to Set Up Auto Scaling for an EC2 Instance
 
-        2. **Create an Auto Scaling Group**:
-           - Go to the Auto Scaling Groups section.
-           - Create a new Auto Scaling Group and attach the EC2 instance.
+        1. **Create an EC2 Instance**:
+           - Refer to "1. EC2 Instance Creation".
 
-        3. **Set Scaling Policies**:
-           - Define scaling policies based on CPU utilization or other metrics.
-           - Example: Add an instance if CPU > 70%, remove if < 20%.
+        2. **Set Up Auto Scaling**:
+           - Go to the **Auto Scaling Groups** section in the EC2 Dashboard.
+           - Create a new Auto Scaling group and associate it with your EC2 instance.
+
+        3. **Define Scaling Policies**:
+           - Add a policy to increase or decrease instances based on metrics like CPU utilization.
+           - Example: Add an instance if CPU > 70%, remove if CPU < 30%.
 
         4. **Test Auto Scaling**:
-           - Simulate load to verify the scaling behavior.
+           - Simulate load to verify scaling behavior.
     """,
     "5. Create VPC and Provide Network Settings": """
+        ### Steps to Create a VPC and Configure Networking
+
         1. **Create a VPC**:
            - Go to the VPC Dashboard and click **Create VPC**.
            - Specify a CIDR block (e.g., 10.0.0.0/16).
@@ -124,21 +149,29 @@ topics = {
            - Launch an instance in the public subnet and verify internet access.
     """,
     "6. Launch MySQL in RDS": """
-        1. **Create a MySQL RDS Instance**:
-           - Navigate to the RDS Dashboard and click **Create Database**.
-           - Select MySQL and configure settings (DB instance class, storage, username/password).
+        ### Launching a MySQL Instance in Amazon RDS
 
-        2. **Set Security Groups**:
-           - Allow MySQL (3306) access from your EC2 instance.
+        1. **Navigate to RDS**:
+           - Open the RDS Dashboard and click **Create Database**.
+           - Choose MySQL as the database engine.
 
-        3. **Connect to the Database**:
-           - Install a MySQL client on EC2.
-           - Connect using:
+        2. **Configure Database Settings**:
+           - Select Standard Create.
+           - Specify instance size, storage type, and credentials.
+
+        3. **Assign Networking Settings**:
+           - Place the RDS instance in a VPC.
+           - Ensure the security group allows MySQL connections (port 3306).
+
+        4. **Connect to the Database**:
+           - SSH into an EC2 instance with MySQL installed and connect:
            ```bash
            mysql -h <RDS-endpoint> -u <username> -p
            ```
     """,
     "7. Create IAM Role to Access an S3 Bucket": """
+        ### Steps to Create an IAM Role for S3 Access
+
         1. **Create an IAM Role**:
            - Navigate to IAM Roles and click **Create Role**.
            - Select **AWS Service** and choose EC2.
